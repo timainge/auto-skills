@@ -12,8 +12,9 @@ tools:
 compatibility:
   agents: all
   note: >
-    Sub-agent spawning (Agent tool) is Claude Code only. In other agents, execute inline.
-    The loop runner calls this automatically in Claude Code; invoke manually in other agents.
+    Sub-agent spawning requires agent support (e.g. an Agent tool or equivalent). In agents
+    without this capability, execute inline. The loop runner calls this automatically in
+    hook-capable agents; invoke manually in others.
 ---
 
 # /execute
@@ -39,7 +40,7 @@ summary only.
 2. Verify dependencies are done (check sprint.md)
 3. Spawn sub-agent with:
    - Task file contents
-   - CLAUDE.md contents (if present)
+   - Project context file (e.g. CLAUDE.md or equivalent) if present
    - Sprint context from sprint.md body (if present)
    - The scope integrity guard (below)
 4. Sub-agent executes, writes work to project files
@@ -59,7 +60,7 @@ You are executing [task-NNN.md]. You must not modify:
 - Any other task file in .loops/tasks/
 - .loops/sprint.md
 - .loops/hooks.yaml
-- .loops/runner.py
+- .loops/runner.sh
 
 Your work goes to the project files described in the task instructions.
 

@@ -11,8 +11,8 @@ and improvement loops — using agent skills and hooks as the substrate. The loo
 ones you'd find in a full orchestration framework; the infrastructure is minimal.
 
 Skills are portable across any agent that supports the agentskills.io spec. Hooks provide
-automation for Claude Code specifically. You can run the loops manually in any coding agent,
-or let them run autonomously in Claude Code.
+automation for agents that support event-driven hooks. You can run the loops manually in any
+coding agent, or let them run autonomously in agents with hook support.
 
 ---
 
@@ -154,25 +154,25 @@ Autonomous execution lives between the gates. The gates are where human judgment
 
 ---
 
-## Claude as Orchestrator
+## The Agent as Orchestrator
 
-The hook is a trigger, not a controller. When the Stop event fires, a minimal shell script
+The hook is a trigger, not a controller. When the stop event fires, a minimal shell script
 checks whether a loop is enabled in hooks.yaml and, if so, injects a loop prompt. That's it.
-Claude reads sprint.md directly, determines what's next, executes it, and updates state.
+The agent reads sprint.md directly, determines what's next, executes it, and updates state.
 
 The orchestration intelligence lives in the prompt files (`.loops/prompts/ralph.md` etc.),
-not in code. Claude is better at reading structured files and making decisions than a Python
-parser is — so that's where the logic belongs.
+not in code. An agent is better at reading structured files and making decisions than a parser
+is — so that's where the logic belongs.
 
 ```
-Stop event fires
+stop event fires
   → runner.sh checks hooks.yaml
     → if ralph enabled: inject .loops/prompts/ralph.md
-      → Claude reads sprint.md, finds next unblocked task
-        → spawns sub-agent to execute it
-          → sub-agent writes results to task file
-            → Claude updates sprint.md checkbox
-              → Stop event fires again → repeat
+      → agent reads sprint.md, finds next unblocked task
+        → delegates task execution (sub-agent or inline)
+          → execution writes results to task file
+            → agent updates sprint.md checkbox
+              → stop event fires again → repeat
 ```
 
 The runner has no knowledge of task structure, dependency resolution, or loop state. It only
@@ -190,8 +190,8 @@ where the plan evolves as execution proceeds.
 
 **Liability**: long sprints are expensive. Each response sees the full prior context.
 
-**Mitigation**: Claude spawns a sub-agent per task using the Agent tool. The sub-agent executes
-in isolation; the supervisor session only sees the task summary, not the full execution
+**Mitigation**: where the agent supports sub-agent spawning, delegate each task to an isolated
+sub-session. The supervisor session only sees the task summary, not the full execution
 transcript. The supervisor stays lean regardless of task complexity.
 
 ```
@@ -239,13 +239,13 @@ project/
     hooks.yaml          ← loop config; toggle on/off without touching settings.json
     runner.sh           ← Stop hook dispatcher: checks enabled loop, injects prompt
     prompts/
-      ralph.md          ← loop continuation instructions (Claude reads + acts on these)
+      ralph.md          ← loop continuation instructions (agent reads + acts on these)
       frink.md
       lisa.md
     sprint.md           ← sprint index + metadata
     tasks/
       task-NNN.md       ← individual task: instructions + status + summary
-    steer.md            ← drop-in steering for ralph/frink (Claude reads + deletes)
+    steer.md            ← drop-in steering for ralph/frink (agent reads + deletes)
     research/
       <topic-slug>/
         plan.md
@@ -253,7 +253,7 @@ project/
         report.md
         gaps.md
         summary.md
-        steer.md        ← drop-in steering for lisa (Claude reads + deletes)
+        steer.md        ← drop-in steering for lisa (agent reads + deletes)
     evals/
       eval.yaml
       iterations/
@@ -288,7 +288,7 @@ isolation: true        # execute via sub-agent (default); false = inline
 ## Instructions
 
 [Task body written by /plan. Specific intent, relevant file paths and interfaces,
-any constraints. Does not repeat what is in CLAUDE.md or sprint context.]
+any constraints. Does not repeat what is in the project context file or sprint context.]
 ```
 
 ### Sprint Index
@@ -318,20 +318,20 @@ summary: ""            # written by /evaluate on completion
 
 ```
 Layer 1 — Skills only
-  Works in any agent supporting agentskills.io spec.
+  Works in any agent supporting the agentskills.io spec.
   Manual invocation: /plan → review → /execute → review → /evaluate
   No automation. Human drives each step.
 
 Layer 2 — Skills + Hooks
-  Claude Code only.
+  Agents with hook/stop-event support.
   Stop hook drives ralph/frink/lisa loops automatically.
   Human sets enabled: true in hooks.yaml; loop runs until paused or done.
 
 Layer 3 — Skills + Hooks + Sub-agents
-  Claude Code only.
-  Execution delegated to sub-agents for context isolation.
+  Agents with both hook support and sub-agent spawning.
+  Execution delegated to isolated sub-sessions per task.
   Supervisor session stays lean. Parallelism for independent tasks.
 ```
 
 Skills always include the manual invocation path. Hooks and sub-agents are additive.
-A user on any agent gets the skills. A user on Claude Code gets the full loop.
+Any agent gets the skills. Agents with hook support get the full loop.

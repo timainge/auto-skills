@@ -52,5 +52,24 @@
 - [ ] Add a `PreToolUse` hook to enforce the scope integrity guard structurally (not just
       via prompt) — block writes to `.loops/tasks/`, `sprint.md`, `hooks.yaml` during execution
 - [ ] Installation: write a `/setup` skill or shell script that copies `.loops/` into a
-      target project and patches settings.json
+      target project and patches the agent's settings file
 - [ ] Publish to agentskills.io registry once skills are validated
+
+## Later — agent-specific packaging
+
+The hook loop currently targets Claude Code's stop-event model. Research how to deliver
+equivalent automation for other agents, and write per-agent setup guides.
+
+- [ ] **GitHub Copilot** — research whether Copilot supports custom hooks or stop events;
+      if not, what's the closest equivalent? (prompt injection, custom actions, extensions?)
+      Meeting with Copilot team — good opportunity to ask directly.
+- [ ] **OpenAI Codex** — research Codex CLI's automation model; does it support hooks or
+      a stop-event pattern? Can `runner.sh` work as-is, or does it need a different trigger?
+- [ ] **OpenHands** — research OpenHands agent loop architecture; it has its own runtime
+      and event model — how does hook injection map to its execution model?
+- [ ] **Cursor / Windsurf** — skills are confirmed compatible (agentskills.io spec); research
+      whether either supports stop-event hooks for Layer 2 automation
+- [ ] Once research is done: write `docs/agents/` with one setup guide per agent covering
+      install path, hook equivalent (or manual-only note), and any known limitations
+- [ ] Consider whether `runner.sh` should be replaced with a more portable trigger — e.g. a
+      watcher script that polls `.loops/hooks.yaml` and uses each agent's headless/API mode

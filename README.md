@@ -2,9 +2,9 @@
 
 Autonomous development loops as portable agent skills.
 
-Plan a sprint, execute tasks, evaluate — driven by Claude reading your project files directly.
-Use the skills manually in any coding agent, or enable the hook loop in Claude Code for fully
-autonomous execution.
+Plan a sprint, execute tasks, evaluate — driven by your agent reading your project files
+directly. Use the skills manually in any coding agent, or enable the hook loop in agents that
+support stop-event hooks for fully autonomous execution.
 
 ---
 
@@ -12,15 +12,19 @@ autonomous execution.
 
 Copy `.loops/` into your project root and add the skills to your agent.
 
-**Claude Code:** add the Stop hook to `.claude/settings.json`:
+**Hook automation** (agents with stop-event support, e.g. Claude Code) — add the hook to
+your agent's settings:
 
 ```json
+// Claude Code: .claude/settings.json
 {
   "hooks": {
     "Stop": [{ "command": "bash .loops/runner.sh" }]
   }
 }
 ```
+
+See `todo.md` for planned support guides for other agents.
 
 ---
 
@@ -59,7 +63,7 @@ Each `/execute` runs the task via a sub-agent, then writes the outcome back to t
 `/evaluate` checks all task summaries against the sprint goal and returns `GOAL_MET` or
 `NEEDS_WORK`.
 
-### 2b. Execute automatically (Claude Code)
+### 2b. Execute automatically (hook-capable agents)
 
 Enable the ralph loop in `.loops/hooks.yaml`:
 
@@ -69,13 +73,13 @@ loops:
     enabled: true
 ```
 
-Claude Code's Stop hook now drives the loop. After each response, `runner.sh` injects the
-ralph prompt; Claude reads `sprint.md`, finds the next unblocked task, executes it via
-sub-agent, updates state, and stops. The hook fires again for the next task.
+The stop hook now drives the loop. After each response, `runner.sh` injects the ralph prompt;
+your agent reads `sprint.md`, finds the next unblocked task, executes it, updates state, and
+stops. The hook fires again for the next task.
 
-**Pause anytime** — set `ralph.enabled: false`. The loop stops at the next Stop event.
+**Pause anytime** — set `ralph.enabled: false`. The loop stops at the next stop event.
 
-**Steer mid-loop** — drop a `.loops/steer.md` file. Claude reads it at the next iteration,
+**Steer mid-loop** — drop a `.loops/steer.md` file. Your agent reads it at the next iteration,
 acts on it, and deletes it. No session restart needed.
 
 ### 3. Research (Lisa loop)
@@ -145,7 +149,8 @@ Skills follow the [agentskills.io](https://agentskills.io) spec. The manual invo
 (`/plan` → `/execute` → `/evaluate`) works in any compatible agent: Claude Code, Cursor,
 Windsurf, GitHub Copilot, Gemini CLI, and others.
 
-Hook automation and sub-agent isolation are Claude Code enhancements layered on top.
+Hook automation and sub-agent isolation require agent support and are layered on top of the
+portable skill foundation.
 
 ---
 

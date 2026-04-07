@@ -83,8 +83,8 @@ isolation: true
 - Any interfaces or signatures to match
 - What NOT to do (if there's a real pitfall)
 
-Do not repeat what is in CLAUDE.md or the sprint context. Task files assume the worker
-has already read those.]
+Do not repeat what is in the project context file or sprint context. Task files assume
+the worker has already read those.]
 ```
 
 ## Writing Good Tasks
@@ -100,7 +100,7 @@ not in individual task files.
 **Task-specific instructions** (what only this task needs) belong in the task file.
 
 A worker begins a session with no memory of prior sessions. The sprint index + task file +
-CLAUDE.md is everything they have. Make it sufficient.
+project context file is everything they have. Make it sufficient.
 
 ## After Planning
 

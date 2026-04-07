@@ -5,8 +5,8 @@ This file provides guidance to Claude Code when working in this repository.
 ## What This Project Is
 
 auto-skills implements autonomous development loops — Ralph (plan/execute/evaluate), Frink
-(eval-driven improvement), and Lisa (research supervisor) — as portable agent skills and Claude
-Code hooks. The goal is a self-contained plugin any project can adopt by copying a directory.
+(eval-driven improvement), and Lisa (research supervisor) — as portable agent skills and
+hooks. The goal is a self-contained plugin any project can adopt by copying a directory.
 
 See `VISION.md` for the full conceptual model. That document is the authoritative design
 reference.
@@ -29,7 +29,7 @@ auto-skills/
     hooks.yaml           ← loop config (enable/disable without touching settings.json)
     runner.sh            ← Stop hook dispatcher: checks enabled loop, injects prompt file
     prompts/
-      ralph.md           ← ralph loop continuation prompt (Claude reads and acts on this)
+      ralph.md           ← ralph loop continuation prompt (agent reads and acts on this)
       frink.md           ← frink loop continuation prompt
       lisa.md            ← lisa loop continuation prompt
     sprint.md            ← sprint index template
@@ -41,20 +41,20 @@ auto-skills/
 ## Key Design Principles
 
 **Portability first.** Skills must work via manual invocation in any agentskills.io-compatible
-agent. Hooks and sub-agents are Claude Code enhancements layered on top — never required for
+agent. Hooks and sub-agents are enhancements for agents that support them — never required for
 core functionality.
 
 **Supervision at the gates.** The human's role is at judgment-heavy transitions: reviewing the
 plan before execution, reviewing the evaluation before the next sprint. The loop owns the
 structured execution between gates.
 
-**Claude as orchestrator.** The hook is a trigger, not a controller. `runner.sh` only checks
-which loop is enabled and injects the corresponding prompt file. Claude reads sprint.md directly,
-decides what's next, and takes action. Orchestration logic lives in prompts, not in code.
+**Agent as orchestrator.** The hook is a trigger, not a controller. `runner.sh` only checks
+which loop is enabled and injects the corresponding prompt file. The agent reads sprint.md
+directly, decides what's next, and takes action. Orchestration logic lives in prompts, not code.
 
-**Lean supervisor session.** When hooks drive the loop, the supervisor session stays lean by
-delegating execution to sub-agents. Sub-agents write results to task files; the supervisor reads
-summaries only.
+**Lean supervisor session.** When hooks drive the loop, keep the supervisor session lean by
+delegating task execution to isolated sub-sessions where the agent supports it. Sub-sessions
+write results to task files; the supervisor reads summaries only.
 
 **Loop integrity.** Every execution prompt must include the scope integrity guard (which files
 not to modify) backed by a PreToolUse hook that enforces it. The guard exists because the

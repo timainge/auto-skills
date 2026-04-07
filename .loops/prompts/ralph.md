@@ -39,7 +39,7 @@ Something is stuck. Set `ralph.enabled: false`, report the blockage, stop.
 
 ## Step 4 — Execute
 
-When executing a task, use the `/execute` skill. The sub-agent must not modify:
+When executing a task, use the `/execute` skill. The executing agent must not modify:
 - `.loops/tasks/<this-task>.md` (it updates status/summary, that's all)
 - Any other task file
 - `.loops/sprint.md` (it updates the checkbox, that's all)
@@ -49,7 +49,7 @@ When executing a task, use the `/execute` skill. The sub-agent must not modify:
 
 ## Step 5 — After executing
 
-After the sub-agent completes, verify the task file shows `status: done` or `status: failed`.
+After execution completes, verify the task file shows `status: done` or `status: failed`.
 Update the sprint.md checkbox. Then stop — the hook will fire again and this prompt will
 re-run for the next task.
 
