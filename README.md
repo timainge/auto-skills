@@ -161,7 +161,6 @@ Hook configuration is agent-specific. See the wiki for setup guides:
 - [Claude Code](../../wiki/Claude-Code)
 - [GitHub Copilot](../../wiki/GitHub-Copilot)
 - [OpenAI Codex](../../wiki/OpenAI-Codex)
-- [OpenHands](../../wiki/OpenHands)
 
 ---
 

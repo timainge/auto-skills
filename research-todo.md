@@ -8,7 +8,6 @@ Output in `.dev/research/`.
 | Claude Code | `claude-code-automation` | complete |
 | GitHub Copilot | `copilot-automation` | complete |
 | OpenAI Codex | `codex-automation` | complete |
-| OpenHands | `openhands-automation` | complete |
 
 ## Goal
 
@@ -23,7 +22,6 @@ ralph/lisa/frink loops automatically.
 | Claude Code | Yes — `Stop` in `settings.json` | 26 total hook events; 4 handler types |
 | GitHub Copilot | Yes — `Stop` in `.github/hooks/*.json` | VS Code agent mode only; cloud agent does not support |
 | OpenAI Codex | Yes — `Stop` in `.codex/hooks.json` | v0.114+; requires `codex_hooks = true` feature flag |
-| OpenHands | No direct equivalent | V1 SDK EventStream is closest; headless CLI loop as fallback |
 
 All three hook-capable agents check `stop_hook_active` on stdin — must exit 0 when true to
 prevent infinite loops. The `runner.sh` pattern is directly portable to Codex and Copilot.
@@ -33,4 +31,3 @@ prevent infinite loops. The `runner.sh` pattern is directly portable to Codex an
 - `.dev/research/claude-code-automation/report.md`
 - `.dev/research/copilot-automation/report.md`
 - `.dev/research/codex-automation/report.md`
-- `.dev/research/openhands-automation/report.md`
