@@ -1,0 +1,26 @@
+# auto-skills loop configuration
+#
+# Toggle loops on/off here without touching .claude/settings.json.
+# Set enabled: true to activate a loop; false to pause it.
+#
+# The Stop hook (settings.json) always fires — this file controls what it does.
+
+loops:
+  ralph:
+    enabled: false
+    max_sessions: 20        # safety valve: stop after this many autonomous sessions
+    protect:                # paths Claude must not modify (enforced by PreToolUse hook)
+      - .loops/hooks.yaml
+      - .loops/runner.py
+      - .loops/sprint.md
+      - .loops/tasks/
+
+  frink:
+    enabled: false
+    max_iterations: 10
+    eval_target: .loops/evals/eval.yaml
+
+  lisa:
+    enabled: false
+    topic: ""               # set to slug of research topic to investigate
+    max_iterations: 5

@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Loop runtime state (project-specific, not committed)
+.loops/.state.json
+.loops/tasks/*.md
+.loops/sprint.md
+.loops/research/
+.loops/evals/iterations/
+.loops/evals/learnings.md
+
+# Keep templates and infrastructure
+!.loops/tasks/task-001.md
+!.loops/sprint.md
