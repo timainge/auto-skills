@@ -8,23 +8,34 @@ support stop-event hooks for fully autonomous execution.
 
 ---
 
-## Install
+## What
 
-Copy `.loops/` into your project root and add the skills to your agent.
+auto-skills gives you three loops:
 
-**Hook automation** (agents with stop-event support, e.g. Claude Code) — add the hook to
-your agent's settings:
+- **Ralph** — plan → execute → evaluate. Takes a goal, breaks it into tasks, runs them, checks
+  the outcome. The human reviews the plan before execution starts and the evaluation before the
+  next sprint.
 
-```json
-// Claude Code: .claude/settings.json
-{
-  "hooks": {
-    "Stop": [{ "command": "bash .loops/runner.sh" }]
-  }
-}
-```
+- **Lisa** — research supervisor. Decomposes a question into enquiries, runs them in parallel,
+  synthesises findings, identifies gaps, iterates until the question is answered.
 
-See `todo.md` for planned support guides for other agents.
+- **Frink** — eval-driven improvement. Runs a composite eval, identifies the biggest gap, makes
+  one targeted change, re-evaluates. Iterates until the target score is met or it plateaus.
+
+## Why
+
+Coding agents work well on focused tasks but drift on multi-step goals without structure. These
+loops provide that structure without locking you into a specific agent or platform. The skills
+are portable: the manual invocation path works in any compatible agent. Hook automation is
+layered on top for agents that support it.
+
+## How
+
+Install by copying `.loops/` into your project root and adding the skills to your agent.
+
+Skills follow the [agentskills.io](https://agentskills.io) spec. The manual invocation path
+(`/plan` → `/execute` → `/evaluate`) works in any compatible agent: Claude Code, Cursor,
+Windsurf, GitHub Copilot, Codex, OpenHands, and others.
 
 ---
 
@@ -143,14 +154,14 @@ The human owns the judgment gates. The loop owns the structured execution betwee
 
 ---
 
-## Portability
+## Agent Setup
 
-Skills follow the [agentskills.io](https://agentskills.io) spec. The manual invocation path
-(`/plan` → `/execute` → `/evaluate`) works in any compatible agent: Claude Code, Cursor,
-Windsurf, GitHub Copilot, Gemini CLI, and others.
+Hook configuration is agent-specific. See the wiki for setup guides:
 
-Hook automation and sub-agent isolation require agent support and are layered on top of the
-portable skill foundation.
+- [Claude Code](../../wiki/Claude-Code)
+- [GitHub Copilot](../../wiki/GitHub-Copilot)
+- [OpenAI Codex](../../wiki/OpenAI-Codex)
+- [OpenHands](../../wiki/OpenHands)
 
 ---
 
