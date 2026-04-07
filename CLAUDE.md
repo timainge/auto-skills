@@ -27,7 +27,11 @@ auto-skills/
 
   .loops/                ← runtime directory installed into target projects
     hooks.yaml           ← loop config (enable/disable without touching settings.json)
-    runner.py            ← Stop hook dispatcher
+    runner.sh            ← Stop hook dispatcher: checks enabled loop, injects prompt file
+    prompts/
+      ralph.md           ← ralph loop continuation prompt (Claude reads and acts on this)
+      frink.md           ← frink loop continuation prompt
+      lisa.md            ← lisa loop continuation prompt
     sprint.md            ← sprint index template
     tasks/               ← task file template
     research/            ← lisa artifacts template
@@ -43,6 +47,10 @@ core functionality.
 **Supervision at the gates.** The human's role is at judgment-heavy transitions: reviewing the
 plan before execution, reviewing the evaluation before the next sprint. The loop owns the
 structured execution between gates.
+
+**Claude as orchestrator.** The hook is a trigger, not a controller. `runner.sh` only checks
+which loop is enabled and injects the corresponding prompt file. Claude reads sprint.md directly,
+decides what's next, and takes action. Orchestration logic lives in prompts, not in code.
 
 **Lean supervisor session.** When hooks drive the loop, the supervisor session stays lean by
 delegating execution to sub-agents. Sub-agents write results to task files; the supervisor reads
@@ -80,7 +88,9 @@ No test suite yet. Validate by:
 
 ## Code Style
 
-- Python 3.11+
-- `runner.py` should be readable without context — someone installing this for the first time
-  will read it to understand what the Stop hook does
-- No external dependencies in `runner.py` — stdlib only; the whole point is zero infrastructure
+- `runner.sh` should be readable without context — someone installing this for the first time
+  will read it to understand what the Stop hook does. Keep it short.
+- No external dependencies anywhere in `.loops/` — stdlib bash + one python3 -c call for JSON
+  escaping. The whole point is zero infrastructure.
+- Loop logic belongs in `prompts/*.md`, not in `runner.sh`. If you find yourself parsing
+  sprint.md in shell, stop — move that decision into the prompt.

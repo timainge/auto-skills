@@ -27,13 +27,20 @@ state), and optionally hooks (the automation).
 
 ```
 .loops/
-  hooks.yaml      ← enable/disable loops; toggle without touching settings.json
-  runner.py       ← Stop hook dispatcher (Claude Code only)
-  sprint.md       ← sprint index: ordered tasks, dependencies, sprint goal
+  hooks.yaml        ← enable/disable loops; toggle without touching settings.json
+  runner.sh         ← Stop hook: checks enabled loop, injects prompt. That's all.
+  prompts/
+    ralph.md        ← loop continuation instructions Claude reads and acts on
+    frink.md
+    lisa.md
+  sprint.md         ← sprint index: ordered tasks, dependencies, sprint goal
   tasks/
-    task-001.md   ← individual task: instructions, done criteria, summary
+    task-001.md     ← individual task: instructions, done criteria, summary
     task-002.md
 ```
+
+The hook is a trigger, not a controller. `runner.sh` injects the loop prompt; Claude reads
+`sprint.md` directly, determines what's next, and acts. Orchestration logic lives in prompts.
 
 ### Manual (any agent)
 

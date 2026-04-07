@@ -154,6 +154,32 @@ Autonomous execution lives between the gates. The gates are where human judgment
 
 ---
 
+## Claude as Orchestrator
+
+The hook is a trigger, not a controller. When the Stop event fires, a minimal shell script
+checks whether a loop is enabled in hooks.yaml and, if so, injects a loop prompt. That's it.
+Claude reads sprint.md directly, determines what's next, executes it, and updates state.
+
+The orchestration intelligence lives in the prompt files (`.loops/prompts/ralph.md` etc.),
+not in code. Claude is better at reading structured files and making decisions than a Python
+parser is — so that's where the logic belongs.
+
+```
+Stop event fires
+  → runner.sh checks hooks.yaml
+    → if ralph enabled: inject .loops/prompts/ralph.md
+      → Claude reads sprint.md, finds next unblocked task
+        → spawns sub-agent to execute it
+          → sub-agent writes results to task file
+            → Claude updates sprint.md checkbox
+              → Stop event fires again → repeat
+```
+
+The runner has no knowledge of task structure, dependency resolution, or loop state. It only
+needs to know: which loop is enabled, and where its prompt lives.
+
+---
+
 ## Session Topology
 
 In hook-driven loops, context accumulates across tasks in the same Claude session. This is the
@@ -164,8 +190,8 @@ where the plan evolves as execution proceeds.
 
 **Liability**: long sprints are expensive. Each response sees the full prior context.
 
-**Mitigation**: the runner instructs Claude to use the Agent tool for each task. A sub-agent
-executes in isolation; the supervisor session only sees the task summary, not the full execution
+**Mitigation**: Claude spawns a sub-agent per task using the Agent tool. The sub-agent executes
+in isolation; the supervisor session only sees the task summary, not the full execution
 transcript. The supervisor stays lean regardless of task complexity.
 
 ```
@@ -211,10 +237,15 @@ Prompt reasoning + structural enforcement. Both layers together.
 project/
   .loops/
     hooks.yaml          ← loop config; toggle on/off without touching settings.json
-    runner.py           ← Stop hook dispatcher
+    runner.sh           ← Stop hook dispatcher: checks enabled loop, injects prompt
+    prompts/
+      ralph.md          ← loop continuation instructions (Claude reads + acts on these)
+      frink.md
+      lisa.md
     sprint.md           ← sprint index + metadata
     tasks/
       task-NNN.md       ← individual task: instructions + status + summary
+    steer.md            ← drop-in steering for ralph/frink (Claude reads + deletes)
     research/
       <topic-slug>/
         plan.md
@@ -222,17 +253,15 @@ project/
         report.md
         gaps.md
         summary.md
-        steer.md        ← drop-in steering (runner injects + deletes)
+        steer.md        ← drop-in steering for lisa (Claude reads + deletes)
     evals/
       eval.yaml
       iterations/
         NNN/
           hypothesis.md
-          changes.md
           score-before.json
           score-after.json
       learnings.md
-    .state.json
 ```
 
 ---
